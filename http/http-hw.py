@@ -95,16 +95,16 @@ def _split_lines(msg):
             # Now continue at the top of the loop.
 
 
-def _format_header(header):
+def _format_header(fields):
     """
     Formats a header from fields.
 
-    'header' is a dict from field names to values.  Returns a list of header
+    'fields' is a dict from field names to values.  Returns a list of header
     lines.
     """
     # The list into which we will collect header lines.
     lines = []
-    for name, value in header.items():
+    for name, value in fields.items():
         # A header line looks like, "name: value".
         line = name + COLON + SPACE + value
         # Add this line to the list.
