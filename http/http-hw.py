@@ -3,10 +3,21 @@ HTTP version 1.1 partial protocol implementation.
 
 See RFC2616 for the protocol specification:
   http://www.w3.org/Protocols/rfc2616/rfc2616.html
-
-NOTE: This module is for illustration purposes only, and does not implement the
-complete, correct protocol.  Do not use in production code.
 """
+
+#-------------------------------------------------------------------------------
+# HOMEWORK:
+#
+# In this problem, you will complete a library for formatting and parsing HTTP
+# messages.  We've already done a lot for you: we've set up the basic structure,
+# written some of the functions, and even written the tests.  Your job is to 
+# find the seven sections marked FIXME and replace the FIXME comments with
+# code.
+#
+# To test your code, you can do the following:
+# - Import your module in the REPL and call the functions by hand.
+# - Run the unit tests, with 'python3 html-test.py'.
+#-------------------------------------------------------------------------------
 
 #-------------------------------------------------------------------------------
 # Imports
@@ -123,15 +134,11 @@ def _parse_header(lines):
     header = {}
     # Loop over lines in the header.
     for line in lines:
-        # Find the first colon.
-        index = line.index(COLON)
-        # Up to the colon is the field name.
-        name = line[: index]
-        # After the colon is the field value.
-        value = line[index + 1 :]
-        # The field value may begin or end with extra space, which is not 
-        # significant.  Remove it.
-        value = value.strip()
+
+        #----------------------------------------
+        # FIXME: Find the 'name' and the 'value'.
+        #----------------------------------------
+
         # Store the field.
         header[name] = value
     # All done.
@@ -168,11 +175,12 @@ def _parse_message(msg):
     the EOL marker removed and decoded into a string; the header, as a dict from
     field name to field value; and the body as a byte array.
     """
-    lines, body = _split_lines(msg)
-    # The first line is the start line.
-    start_line = lines[0]
-    # Remaining lines are the header.
-    header = _parse_header(lines[1 :])
+
+    #------------------------------------------------------------
+    # FIXME: Find 'start_line', 'header', and 'body'.
+    # Use the _split_lines() and _parse_header() functions above.
+    #------------------------------------------------------------
+
     return start_line, header, body
     
 
@@ -183,7 +191,10 @@ def _format_request_line(method, path):
     'method' is the request method; 'path' is the requested path.  Returns
     the request line as a str.
     """
-    return method + SPACE + path + SPACE + HTTP_VERSION
+
+    #-------------------------------
+    # FIXME: Write the request line.
+    #-------------------------------
 
 
 def _parse_request_line(line):
@@ -192,16 +203,14 @@ def _parse_request_line(line):
 
     Returns the method and path.
     """
-    # Up to the first space is the method.
-    index0 = line.index(SPACE)
-    method = line[: index0]
-    # Starting from the first space, up to the next space is the path.
-    index1 = line.index(SPACE, index0 + 1)
-    path = line[index0 + 1 : index1]
-    # The remainder is the protocol version.
-    http_version = line[index1 + 1 :]
+
+    #-----------------------------------------------------
+    # FIXME: Extract 'http_version', 'method', and 'path'.
+    #-----------------------------------------------------
+
     # Make sure it's the protocol version we recognize.
     assert http_version == HTTP_VERSION
+
     return method, path
 
 
@@ -221,18 +230,14 @@ def _parse_status_line(line):
 
     Returns the status code and reason.
     """
-    # Up to the first space is the protocol version.
-    index0 = line.index(SPACE)
-    http_version = line[: index0]
+
+    #-------------------------------------------------------
+    # FIXME: Extract 'http_version', 'status', and 'reason'.
+    #-------------------------------------------------------
+
     # Make sure it's the protocol version we recognize.
     assert http_version == HTTP_VERSION
-    # Starting from the first space, up to the next space is the status code.
-    index1 = line.index(SPACE, index0 + 1)
-    status = line[index0 + 1 : index1]
-    # Convert the status code to an integer.
-    status = int(status)
-    # The remainder is the reason.
-    reason = line[index1 + 1 :]
+
     return status, reason
 
 
@@ -242,8 +247,12 @@ def format_request(request):
 
     'request' is a 'Request' object.  Returns a byte array.
     """
-    start_line = _format_request_line(request.method, request.path)
-    msg = _format_message(start_line, request.header, request.body)
+
+    #--------------------------------------------------
+    # FIXME: Format the request.  
+    # Use _format_request_line() and _format_message().
+    #--------------------------------------------------
+
     return msg
 
 
@@ -277,6 +286,12 @@ def parse_response(msg):
     'msg' is a byte array containing the response message.  Returns a 'Response'
     object.
     """
+
+    #-----------------------------------------------
+    # FIXME: Parse the response.
+    # Use _parse_message() and _parse_status_line().
+    #-----------------------------------------------
+
     start_line, header, body = _parse_message(msg)
     status, reason = _parse_status_line(start_line)
     return Response(status, reason, header, body)
