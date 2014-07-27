@@ -3,8 +3,8 @@ import os
 import socket
 import sys
 
-# The default port for HTTP.
-DEFAULT_PORT = 80
+import httpmsg
+import urlparse
 
 
 def _read_socket(sock):
@@ -45,62 +45,35 @@ def send_request(host, port, msg):
         return _read_socket(sock)
 
 
-class GetError(RuntimeError):
-
-    def __init__(self, status, reason):
-        super().__init__("GET failed: {} ({})".format(status, reason))
-
-
-
-def parse_authority(authority):
-    '''
-    Parses an HTTP authority.
-
-    The authority may be a 'host:port' pair, where 'host' is a host name and
-    'port' is a numerical port number, or just a host name, in which case the
-    HTTP default port number is assumed.
-
-    @return
-      host, port
-    '''
-    if ':' in authority:
-        host, port = authority.split(':', 1)
-        # Convert the port number from a string to an integer.
-        port = int(port)
-    else:
-        # No port given; use the default port.
-        host = authority
-        port = DEFAULT_PORT
-
-    return host, port
-    
-
 def get(url):
-    import urlparse, httpmsg
-
+    '''
+    Requests a URL and returns its contents.
+    '''
+    # First parse the URL.
     parts = urlparse.parse(url)
-    host, port = parse_authority(parts.authority)
-
-    path = parts.full_path
+    host = parts.authority   # Assume the authority is the server hostname.
+    port = 80                # Default port for HTTP.
+    path = parts.full_path   # This includes the path, query, and fragment.
     # If no path was specified, assume the default path, /.
     if path == '':
         path = '/'
 
-    # Build a GET request with only the 'host' header, and an empty body.
-    header = {'Host': host}
-    request = httpmsg.Request('GET', path, header, b'')
+    # FIXME: Build the headers, which should contain 'Host'.
+    headers = ...
+
+    # FIXME: Build a GET request with the path, headers, and an empty body.
+    request = ...
+    # FIXME: Format the request into a message.
     req_msg = httpmsg.format_request(request)
-    # Send the request and get the response.
+
+    # Now send the message and get a response from the server.
     resp_msg = send_request(host, port, req_msg)
-    # Parse the response.
-    response = httpmsg.parse_response(resp_msg)
+
+    # FIXME: Parse the response.
+    response = ...
     
-    if response.status == 200:
-        # Success.
-        return response.body
-    else:
-        # Not successful; don't return data.
-        raise GetError(response.status, response.reason)
+    # FIXME: Check the status of response.  If it's 200, return the body.
+    return ...
 
 
 #-------------------------------------------------------------------------------
