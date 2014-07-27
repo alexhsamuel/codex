@@ -61,7 +61,7 @@ def print_wrapped(text, width):
     pars = split_paragraphs(text)
     for par in pars:
         # Split the paragraph into words by separating at each space.
-        words = split(text, ' ')
+        words = split(par, ' ')
         # Keep track of the length of the line we've printed so far.
         length = 0
         for word in words:
