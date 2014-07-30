@@ -3,6 +3,10 @@ import os
 import socket
 import sys
 
+import httpmsg
+import urlparse
+
+
 # The default port for HTTP.
 DEFAULT_PORT = 80
 
@@ -45,43 +49,15 @@ def send_request(host, port, msg):
         return _read_socket(sock)
 
 
-class GetError(RuntimeError):
-
-    def __init__(self, status, reason):
-        super().__init__("GET failed: {} ({})".format(status, reason))
-
-
-
-def parse_authority(authority):
-    '''
-    Parses an HTTP authority.
-
-    The authority may be a 'host:port' pair, where 'host' is a host name and
-    'port' is a numerical port number, or just a host name, in which case the
-    HTTP default port number is assumed.
-
-    @return
-      host, port
-    '''
-    if ':' in authority:
-        host, port = authority.split(':', 1)
-        # Convert the port number from a string to an integer.
-        port = int(port)
-    else:
-        # No port given; use the default port.
-        host = authority
-        port = DEFAULT_PORT
-
-    return host, port
-    
-
 def get(url):
-    import urlparse, httpmsg
-
+    '''
+    Requests a URL and returns its contents.
+    '''
+    # First parse the URL.
     parts = urlparse.parse(url)
-    host, port = parse_authority(parts.authority)
-
-    path = parts.full_path
+    host = parts.authority   # Assume the authority is the server hostname.
+    port = DEFAULT_PORT
+    path = parts.full_path   # This includes the path, query, and fragment.
     # If no path was specified, assume the default path, /.
     if path == '':
         path = '/'
@@ -100,7 +76,9 @@ def get(url):
         return response.body
     else:
         # Not successful; don't return data.
-        raise GetError(response.status, response.reason)
+        raise RuntimeError(
+            "GET of " + url + " returned " + str(response.status)
+            + ": " + response.reason)
 
 
 #-------------------------------------------------------------------------------

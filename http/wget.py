@@ -7,6 +7,10 @@ import httpmsg
 import urlparse
 
 
+# The default port for HTTP.
+DEFAULT_PORT = 80
+
+
 def _read_socket(sock):
     '''
     Reads all available data from a socket.
@@ -52,23 +56,20 @@ def get(url):
     # First parse the URL.
     parts = urlparse.parse(url)
     host = parts.authority   # Assume the authority is the server hostname.
-    port = 80                # Default port for HTTP.
+    port = DEFAULT_PORT
     path = parts.full_path   # This includes the path, query, and fragment.
     # If no path was specified, assume the default path, /.
     if path == '':
         path = '/'
 
-    # FIXME: Build the headers, which should contain 'Host'.
-    headers = ...
-
+    # FIXME: Build the header, which should contain 'Host'.
+    header = ...
     # FIXME: Build a GET request with the path, headers, and an empty body.
     request = ...
     # FIXME: Format the request into a message.
-    req_msg = httpmsg.format_request(request)
-
+    req_msg = ...
     # Now send the message and get a response from the server.
     resp_msg = send_request(host, port, req_msg)
-
     # FIXME: Parse the response.
     response = ...
     
