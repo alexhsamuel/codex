@@ -1,4 +1,4 @@
 codex
 =====
 
-Coalition for Queens CodeX workshops eries
+Coalition for Queens CodeX workshops series
